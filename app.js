@@ -33,7 +33,7 @@ var timer = setInterval(getFollowers, 3600000); // 1 hour
 //getFollowers();
 function getFollowers() {
     client.get("followers/ids", { stringify_ids: true }, function(error, ids, response) {
-        console.log(ids.ids);
+        //console.log(ids.ids);
         if (firstTime) {
             followerList=ids.ids;
         } else {
@@ -62,10 +62,11 @@ function getFollowers() {
                     try
                     {
                         // add to text file
-                        WriteToFile("newfollowers.txt", id);                         
+                        WriteToFile("newfollowers.txt", id+"\r\n");                         
                     }
                     catch (err) {
                     /* Handle the error */
+                        console.log(err);
                     } finally {
                     // something here
                     }
