@@ -1,7 +1,6 @@
 var Twitter = require('twitter');
 var dotenv = require('dotenv');
 var fs = require('fs');
-var readline = require('readline');
 dotenv.config();
 
 var client = new Twitter({
@@ -38,32 +37,25 @@ function processNewFollowers()
 function ReadFile(filename)
     {
         console.log("starting to read file");
-        try {
-            var rd = readline.createInterface({
-                input: fs.createReadStream(filename),
-                output: process.stdout,
-                console: false
-            });
-            rd.on('line', function(line) {
-                console.log(line);
-                // get screen_name
-                client.get("users/lookup", {user_id:line}, function(error, user, response) {
-                    if (error) console.log(error);
-                    var _user = user[0].screen_name;
-                
-                    console.log(_user);
-                
-                    client.post('statuses/update', {status:"@"+_user + " Thanks for the follow."}, function (error, tweet, response) {
-                        if (error) console.log("There was an error sending post " + error);
-                        console.log("Post sent to new follower @" + _user + " successfully");
-                    });
-                
-                });
-            });
-     
-          } catch (err) {
-            /* Handle the error */
-          } finally {
+        var newFollowers = fs.readFileSync(filename).toString().split("\n");
+        for(var i=0;i<newFollowers.length;i++)
+        {
+            client.get("users/lookup", {user_id:newFollowers[i]}, function(error, user, response) {
+                if (error) console.log(error);
+                var _user = user[0].screen_name;
             
-          }
+                console.log(_user);
+            
+                client.post('statuses/update', {status:"@"+_user + " Thanks for the follow."}, function (error, tweet, response) {
+                    if (error) console.log("There was an error sending post " + error);
+                    console.log("Post sent to new follower @" + _user + " successfully");
+                });
+
+                // follow back
+                client.post("friendships/post", {user_id:newFollowers[i], follow:true}, function(error, user, response) {
+                    if (error) console.log(error);
+                    console.log("Follow back successful " + user.screen_name);
+                });            
+            });
+        }
     }

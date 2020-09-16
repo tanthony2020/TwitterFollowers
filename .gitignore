@@ -2,3 +2,5 @@ node_modules
 gulpfile.js
 package.json
 package-lock.json
+currentfollowers.txt
+newfollowers.txt
