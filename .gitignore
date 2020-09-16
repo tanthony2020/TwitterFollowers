@@ -1,4 +1,4 @@
 node_modules
-gulpfile
+gulpfile.js
 package.json
-package-lock.json.env
+package-lock.json
